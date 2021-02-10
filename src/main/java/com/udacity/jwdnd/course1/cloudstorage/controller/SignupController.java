@@ -1,6 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.model.UserModel;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,15 +25,15 @@ public class SignupController {
     }
 
     @PostMapping()
-    public String signupUser(@ModelAttribute User user, Model model) {
+    public String signupUser(@ModelAttribute("user") UserModel userModel, Model model) {
         String signupError = null;
 
-        if (!userService.isUsernameAvailable(user.getUsername())) {
+        if (!userService.isUsernameAvailable(userModel.getUsername())) {
             signupError = "The username already exists.";
         }
 
         if (signupError == null) {
-            int rowsAdded = userService.createUser(user);
+            int rowsAdded = userService.createUser(userModel);
             if (rowsAdded < 0) {
                 signupError = "There was an error signing you up. Please try again.";
             }

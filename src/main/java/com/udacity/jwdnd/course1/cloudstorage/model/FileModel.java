@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-public class FileForm {
+public class FileModel {
     private Integer fileId;
     private String filename;
     private String contentType;
@@ -13,7 +13,7 @@ public class FileForm {
     private byte[] filedata;
 
 
-    public FileForm(Integer fileId, String filename, String contentType, String filesize, Integer userId, byte[] filedata) {
+    public FileModel(Integer fileId, String filename, String contentType, String filesize, Integer userId, byte[] filedata) {
         this.fileId = fileId;
         this.filename = filename;
         this.contentType = contentType;
@@ -22,12 +22,20 @@ public class FileForm {
         this.filedata = filedata;
     }
 
-    public FileForm(MultipartFile file, Integer userId) throws IOException {
+    public FileModel(MultipartFile file, Integer userId) throws IOException {
         this.filename = file.getOriginalFilename();
         this.contentType = file.getContentType();
         this.filesize = Long.toString(file.getSize());
         this.userId = userId;
         this.filedata = file.getBytes();
+    }
+
+    public Integer getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Integer fileId) {
+        this.fileId = fileId;
     }
 
     public String getFilename() {
