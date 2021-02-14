@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +21,8 @@ public class NoteController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "/note/create")
-    public String addNote(Authentication authentication, NoteModel noteModel){
+    @PostMapping(value = "/note/new")
+    public String newNote(Authentication authentication, NoteModel noteModel){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
@@ -34,7 +35,21 @@ public class NoteController {
         return "redirect:/home#nav-notes";
     }
 
-    @RequestMapping(value = "/note/delete/{id}")
+    @PostMapping(value = "/note/edit")
+    public String editNote(Authentication authentication,@ModelAttribute("noteModelEdit") NoteModel noteModel){
+        Integer userId = userService.getUserId(authentication.getName());
+
+        try {
+            noteModel.setUserId(userId);
+            noteService.updateNote(noteModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/home#nav-notes";
+    }
+
+    @PostMapping(value = "/note/delete/{id}")
     public String deleteNote(Authentication authentication, @PathVariable(value = "id") Integer noteId){
         Integer userId = userService.getUserId(authentication.getName());
 
