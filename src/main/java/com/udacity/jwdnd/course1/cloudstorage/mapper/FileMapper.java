@@ -16,4 +16,7 @@ public interface FileMapper {
 
     @Delete("DELETE FROM FILES WHERE fileId = #{fileId} AND userid = #{userId}")
     Integer delete(Integer fileId, Integer userId);
+
+    @Select("SELECT * FROM FILES WHERE fileId = #{fileId} AND userid = #{userId} LIMIT 1")
+    FileModel getFile(Integer fileId, Integer userId);
 }

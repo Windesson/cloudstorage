@@ -21,10 +21,13 @@ public class HomeController {
     }
 
     @GetMapping()
-    public String loginView(Authentication authentication, Model model) {
-        Integer userId = userService.getUserId(authentication.getName());
-        model.addAttribute("files", this.fileService.getFiles(userId));
-
-        return "home";
+    public String homeView(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        if(username!= null) {
+            Integer userId = userService.getUserId(username);
+            model.addAttribute("files", this.fileService.getFiles(userId));
+            return "home";
+        }
+        return "redirect:/logout";
     }
 }

@@ -17,19 +17,20 @@ public class FileService {
         this.fileMapper = fileMapper;
     }
 
-
     public List<FileModel> getFiles(Integer userId) {
-        //List<FileForm> fileForms = fileMapper.getFiles(userId);
-
         return fileMapper.getFiles(userId);
     }
 
     public Integer add(MultipartFile file, Integer userId) throws IOException {
-        FileModel fileModel = new FileModel(file, userId);
-        return fileMapper.insert(fileModel);
+        return fileMapper.insert(new FileModel(file, userId));
     }
 
     public Integer delete(Integer fileId, Integer userId) {
         return fileMapper.delete(fileId,userId);
     }
+
+    public FileModel get(Integer fileId, Integer userId) {
+        return fileMapper.getFile(fileId, userId);
+    }
 }
+
