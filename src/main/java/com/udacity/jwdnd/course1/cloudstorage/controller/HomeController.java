@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -16,11 +17,14 @@ public class HomeController {
     UserService userService;
     FileService fileService;
     NoteService noteService;
+    CredentialService credentialService;
 
-    public HomeController(UserService userService, FileService fileService, NoteService noteService) {
+    public HomeController(UserService userService, FileService fileService,
+                          NoteService noteService, CredentialService credentialService) {
         this.userService = userService;
         this.fileService = fileService;
         this.noteService = noteService;
+        this.credentialService = credentialService;
     }
 
     @GetMapping()
@@ -30,6 +34,7 @@ public class HomeController {
             Integer userId = userService.getUserId(username);
             model.addAttribute("files", this.fileService.getFiles(userId));
             model.addAttribute("notes", this.noteService.getNotes(userId));
+            model.addAttribute("credentials", this.credentialService.getCredentials(userId));
             return "home";
         }
         return "redirect:/logout";

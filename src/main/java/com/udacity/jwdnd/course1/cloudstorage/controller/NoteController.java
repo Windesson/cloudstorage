@@ -5,10 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class NoteController {
@@ -32,11 +29,11 @@ public class NoteController {
             e.printStackTrace();
         }
 
-        return "redirect:/home#nav-notes";
+        return "redirect:/home";
     }
 
-    @PostMapping(value = "/note/edit")
-    public String editNote(Authentication authentication,@ModelAttribute("noteModelEdit") NoteModel noteModel){
+    @RequestMapping(value = "/note/edit", method = RequestMethod.PATCH)
+    public String editNote(Authentication authentication, NoteModel noteModel){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
@@ -46,7 +43,7 @@ public class NoteController {
             e.printStackTrace();
         }
 
-        return "redirect:/home#nav-notes";
+        return "redirect:/home";
     }
 
     @PostMapping(value = "/note/delete/{id}")
@@ -59,6 +56,6 @@ public class NoteController {
             e.printStackTrace();
         }
 
-        return "redirect:/home#nav-notes";
+        return "redirect:/home";
     }
 }
