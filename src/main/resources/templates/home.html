@@ -62,9 +62,12 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+
+                        <form th:object="${noteModel}" action="#" th:action="@{/note/create}" method="POST">
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
                         </button>
+                        <form>
 
                         <div class="table-responsive">
                             <table class="table table-striped" id="userTable">
@@ -75,14 +78,14 @@
                                         <th style="width: 60%" scope="col">Description</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:each="note : ${notes}">
                                     <tr>
-                                        <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                        <td >
+                                            <btton type="button" class="btn btn-success">Edit</btton>
+                                            <a th:href="@{/note/delete/{id}(id=${note.getNoteId()})}" class="btn btn-danger">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th th:text="${note.getNoteTitle()}"  scope="row">Example Note Title</th>
+                                        <td th:text="${note.getNoteDescription()}"> Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>

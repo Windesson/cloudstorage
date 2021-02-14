@@ -26,7 +26,7 @@ public class FileController {
     }
 
     @PostMapping("/file/upload")
-    public String uploadFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile file, Model model){
+    public String uploadFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile file){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
