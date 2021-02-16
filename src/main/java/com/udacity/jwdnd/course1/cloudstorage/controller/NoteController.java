@@ -18,13 +18,14 @@ public class NoteController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "/note/new")
+    @PostMapping(value = "/note")
     public String newNote(Authentication authentication, NoteModel noteModel){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
             noteModel.setUserId(userId);
-            noteService.addNote(noteModel);
+            if(noteModel.getNoteId() == null) noteService.addNote(noteModel);
+            else noteService.updateNote(noteModel);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,19 +33,6 @@ public class NoteController {
         return "redirect:/home";
     }
 
-    @RequestMapping(value = "/note/edit", method = RequestMethod.PATCH)
-    public String editNote(Authentication authentication, NoteModel noteModel){
-        Integer userId = userService.getUserId(authentication.getName());
-
-        try {
-            noteModel.setUserId(userId);
-            noteService.updateNote(noteModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "redirect:/home";
-    }
 
     @PostMapping(value = "/note/delete/{id}")
     public String deleteNote(Authentication authentication, @PathVariable(value = "id") Integer noteId){

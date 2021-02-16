@@ -21,27 +21,14 @@ public class CredentialController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "/credential/new")
+    @PostMapping(value = "/credential")
     public String newCredential(Authentication authentication, CredentialModel credentialModel){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
             credentialModel.setUserId(userId);
-            credentialService.addCredential(credentialModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "redirect:/home";
-    }
-
-    @RequestMapping(value = "/credential/edit", method = RequestMethod.PATCH)
-    public String editCredential(Authentication authentication, CredentialModel credentialModel){
-        Integer userId = userService.getUserId(authentication.getName());
-
-        try {
-            credentialModel.setUserId(userId);
-            credentialService.updateCredential(credentialModel);
+            if(credentialModel.getCredentialId() == null) credentialService.addCredential(credentialModel);
+            else credentialService.updateCredential(credentialModel);
         } catch (Exception e) {
             e.printStackTrace();
         }
