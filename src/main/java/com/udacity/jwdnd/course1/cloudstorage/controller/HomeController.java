@@ -30,13 +30,16 @@ public class HomeController {
     @GetMapping()
     public String homeView(Authentication authentication, Model model) {
         String username = authentication.getName();
-        if(username!= null) {
+        try {
             Integer userId = userService.getUserId(username);
             model.addAttribute("files", this.fileService.getFiles(userId));
             model.addAttribute("notes", this.noteService.getNotes(userId));
-            model.addAttribute("credentials", this.credentialService.getCredentials(userId));
-            return "home";
+            model.addAttribute("credentialDTOs", this.credentialService.getCredentials(userId));
+        } catch (Exception e){
+            model.addAttribute("loginError", "an error occurred please try again later");
+            return "login";
         }
-        return "redirect:/logout";
+
+        return "home";
     }
 }

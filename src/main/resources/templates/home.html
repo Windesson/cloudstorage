@@ -147,7 +147,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="credential : ${credentials}" th:object="${credentials}">
+                                <tr th:each="credential : ${credentialDTOs}">
                                     <td >
                                         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                             <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -164,7 +164,7 @@
                                     </td>
                                     <th th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
                                     <td th:text="${credential.getUsername()}" >Example Credential Username</td>
-                                    <td th:text="${credential.getPassword()}" >Example Credential Password</td>
+                                    <td th:text="${credential.getEncryptedPassword()}" >Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -180,7 +180,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form th:object="${credentialModel}" action="#" th:action="@{/credential}" method="POST">
+                                        <form th:object="${credentialDto}" action="#" th:action="@{/credential}" method="POST">
                                             <input type="hidden" name="credentialId" id="credentialModel-id">
                                             <div class="form-group">
                                                 <label for="noteModel-title" class="col-form-label">URL</label>

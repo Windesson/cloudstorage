@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.services;
 
+import com.udacity.jwdnd.course1.cloudstorage.dto.CredentialDto;
 import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.CredentialModel;
 import org.springframework.stereotype.Service;
@@ -20,26 +21,45 @@ public class CredentialService {
         this.encryptionService = encryptionService;
     }
 
-    public List<CredentialModel> getCredentials(Integer userId){
-        List<CredentialModel> CredentialModelList = new ArrayList<>();
+    public List<CredentialDto> getCredentials(Integer userId){
+        List<CredentialDto> CredentialList = new ArrayList<>();
 
         for(CredentialModel model : this.credentialMapper.getCredentials(userId)){
-            decryptPassword(model);
-            CredentialModelList.add(model);
+            CredentialList.add(
+                    new CredentialDto(
+                            model.getCredentialId(),
+                            encryptionService.decryptValue(model.getPassword(), model.getKey()),
+                            model.getUsername(),
+                            model.getPassword(),
+                            model.getUrl()
+                    ));
         }
 
-        return CredentialModelList;
+        return CredentialList;
     }
 
-    public Integer addCredential(CredentialModel credentialModel) {
-        encryptPassword(credentialModel);
+    public Integer addCredential(CredentialDto credentialDto, Integer userID) {
+        CredentialModel credentialModel = getCredentialModel(credentialDto, userID);
         credentialModel.setCredentialId(null);
+
         return this.credentialMapper.addCredential(credentialModel);
     }
 
-    public Integer updateCredential(CredentialModel credentialModel){
-        encryptPassword(credentialModel);
+    public Integer updateCredential(CredentialDto credentialDto, Integer userID){
+        CredentialModel credentialModel = getCredentialModel(credentialDto, userID);
+        credentialModel.setCredentialId(credentialDto.getCredentialId());
+
         return this.credentialMapper.updateCredential(credentialModel);
+    }
+
+    private CredentialModel getCredentialModel(CredentialDto credentialDto, Integer userID) {
+        CredentialModel credentialModel = new CredentialModel();
+        credentialModel.setUsername(credentialDto.getUsername());
+        credentialModel.setPassword(credentialDto.getPassword());
+        credentialModel.setUrl(credentialDto.getUrl());
+        credentialModel.setUserId(userID);
+        encryptPassword(credentialModel);
+        return credentialModel;
     }
 
     public Integer deleteCredential(Integer credentialId, Integer userId){
@@ -58,12 +78,5 @@ public class CredentialService {
 
         model.setPassword(encryptValue);
         model.setKey(key);
-    }
-
-    private void decryptPassword(CredentialModel model) {
-        String encryptedPassword = model.getPassword();
-        String key = model.getKey();
-        String encryptValue = encryptionService.decryptValue(encryptedPassword,key);
-        model.setPassword(encryptValue);
     }
 }

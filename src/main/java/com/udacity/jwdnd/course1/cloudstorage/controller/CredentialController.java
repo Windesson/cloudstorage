@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.dto.CredentialDto;
 import com.udacity.jwdnd.course1.cloudstorage.model.CredentialModel;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -22,13 +23,12 @@ public class CredentialController {
     }
 
     @PostMapping(value = "/credential")
-    public String newCredential(Authentication authentication, CredentialModel credentialModel){
+    public String newCredential(Authentication authentication, CredentialDto CredentialDto){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
-            credentialModel.setUserId(userId);
-            if(credentialModel.getCredentialId() == null) credentialService.addCredential(credentialModel);
-            else credentialService.updateCredential(credentialModel);
+            if(CredentialDto.getCredentialId() == null) credentialService.addCredential(CredentialDto,userId);
+            else credentialService.updateCredential(CredentialDto,userId);
         } catch (Exception e) {
             e.printStackTrace();
         }

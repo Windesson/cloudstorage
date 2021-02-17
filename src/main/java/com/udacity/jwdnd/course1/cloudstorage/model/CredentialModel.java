@@ -17,6 +17,10 @@ public class CredentialModel {
         this.userId = userId;
     }
 
+    public CredentialModel() {
+
+    }
+
     public Integer getCredentialId() {
         return credentialId;
     }
@@ -64,4 +68,5 @@ public class CredentialModel {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
 }
