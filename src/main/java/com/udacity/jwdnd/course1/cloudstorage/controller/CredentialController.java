@@ -36,6 +36,7 @@ public class CredentialController {
             model.addFlashAttribute("error", "an error occurred please try again later");
         }
 
+        model.addFlashAttribute("navTab","credentials");
         RedirectView redirectView= new RedirectView("/home",true);
         return redirectView;
     }
@@ -51,6 +52,7 @@ public class CredentialController {
             model.addFlashAttribute("error", "an error occurred please try again later");
         }
 
+        model.addFlashAttribute("navTab","credentials");
         RedirectView redirectView= new RedirectView("/home",true);
         return redirectView;
     }

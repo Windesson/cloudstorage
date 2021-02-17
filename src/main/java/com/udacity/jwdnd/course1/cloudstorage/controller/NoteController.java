@@ -43,6 +43,7 @@ public class NoteController {
             model.addFlashAttribute("error", "An error occurred please try again later.");
         }
 
+        model.addFlashAttribute("navTab","notes");
         RedirectView redirectView= new RedirectView("/home",true);
         return redirectView;
     }
@@ -58,6 +59,7 @@ public class NoteController {
             model.addFlashAttribute("error", "An error occurred please try again later.");
         }
 
+        model.addFlashAttribute("navTab","notes");
         RedirectView redirectView= new RedirectView("/home",true);
         return redirectView;
     }
