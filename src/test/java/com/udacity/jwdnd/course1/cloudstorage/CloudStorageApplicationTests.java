@@ -10,6 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.util.List;
+import java.util.Optional;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
@@ -96,12 +99,18 @@ class CloudStorageApplicationTests {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.login(username, password);
 
-		String noteTitle = "title-test";
-		String noteDescription = "-test1";
+		String expectedNoteTitle = "title-test";
+		String expectedNoteDescription = "-test1";
 		NotePage notePage = new NotePage(driver);
-		notePage.createNote(noteTitle, noteDescription);
+		notePage.createNote(expectedNoteTitle, expectedNoteDescription);
 
-		Assertions.assertEquals("Home", driver.getTitle());
+		WebElement baseTable = driver.findElement(By.cssSelector("#userTable"));
+		WebElement tableRow  = baseTable.findElements(By.tagName("tr")).get(1);
+		String actualNoteTitle = tableRow.findElement(By.tagName("th")).getText();
+		String actualNoteDescription = tableRow.findElements(By.tagName("td")).get(1).getText();
+
+		Assertions.assertEquals(expectedNoteTitle, actualNoteTitle);
+		Assertions.assertEquals(expectedNoteDescription, actualNoteDescription);
 	}
 
 }
