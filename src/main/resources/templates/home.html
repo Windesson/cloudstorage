@@ -10,6 +10,12 @@
     </head>
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
+            <div th:if="${error}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>alert!</strong> <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <div id="logoutDiv">
                 <form action="#" th:action="@{/logout}" method="POST">
                     <button type="submit" class="btn btn-secondary float-right">Logout</button>
@@ -51,9 +57,16 @@
                                 <tbody th:each="file : ${files}">
                                 <tr>
                                     <td>
-                                        <a target="_blank" th:href="@{/file/download/{id}(id=${file.getFileId()})}"
-                                           class="btn btn-success">View</a>
-                                        <a  th:href="@{/file/delete/{id}(id=${file.getFileId()})}"  class="btn btn-danger">Delete</a>
+                                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                                <a target="_blank" th:href="@{/file/download/{id}(id=${file.getFileId()})}"class="btn btn-success">View</a>
+                                            </div>
+                                            <div class="btn-group mr-2" role="group" aria-label="Second group">
+                                                <form action="#" th:action="@{/file/delete/{id}(id=${file.getFileId()})}" method="POST">
+                                                    <button class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </td>
                                     <th th:text="${file.getFilename()}" scope="row">ExampleFile.txt</th>
                                 </tr>
@@ -81,7 +94,7 @@
                                         <td >
                                             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                                 <div class="btn-group mr-2" role="group" aria-label="First group">
-                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}', '${note.getNoteTitle()}', '${note.getNoteDescription()}')|">
+                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}', '[${note.getNoteTitle()}]', '[${note.getNoteDescription()}]')|">
                                                             Edit
                                                     </button>
                                                 </div>
