@@ -97,9 +97,7 @@
                                                     <span th:attr="id=|noteId${note.getNoteId()}|" style="display:none" th:text="${note.getNoteId()}"></span>
                                                     <span th:attr="id=|noteTitle${note.getNoteId()}|" style="display:none" th:text="${note.getNoteTitle()}"></span>
                                                     <span th:attr="id=|noteDescription${note.getNoteId()}|" style="display:none" th:text="${note.getNoteDescription()}"></span>
-                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}')|">
-                                                            Edit
-                                                    </button>
+                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}')|">Edit</button>
                                                 </div>
                                                 <div class="btn-group mr-2" role="group" aria-label="Second group">
                                                     <form action="#" th:action="@{/note/delete/{id}(id=${note.getNoteId()})}" method="POST">

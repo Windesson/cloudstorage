@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -37,7 +38,12 @@ public class NotePage {
         noteModelTitle.sendKeys(title);
         noteModelDescription.sendKeys(description);
         noteSaveChanges.click();
+    }
 
+    public void updateOpenedNote(String title, String description) {
+        noteModelTitle.sendKeys(title);
+        noteModelDescription.sendKeys(description);
+        noteSaveChanges.click();
     }
 
 }
