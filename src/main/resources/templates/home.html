@@ -94,7 +94,10 @@
                                         <td >
                                             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                                 <div class="btn-group mr-2" role="group" aria-label="First group">
-                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}', '${note.getNoteTitle()}', '${note.getNoteDescription()}')|">
+                                                    <span th:attr="id=|noteId${note.getNoteId()}|" style="display:none" th:text="${note.getNoteId()}"></span>
+                                                    <span th:attr="id=|noteTitle${note.getNoteId()}|" style="display:none" th:text="${note.getNoteTitle()}"></span>
+                                                    <span th:attr="id=|noteDescription${note.getNoteId()}|" style="display:none" th:text="${note.getNoteDescription()}"></span>
+                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}')|">
                                                             Edit
                                                     </button>
                                                 </div>
@@ -229,10 +232,10 @@
         <!--For opening the noteModel modal-->
         <script type="text/javascript">
             // For opening the noteModel modal
-            function showNoteModal(noteId, noteTitle, noteDescription) {
+            function showNoteModal(noteId) {
                 $('#noteModel-id').val(noteId ? noteId : '');
-                $('#noteModel-title').val(noteTitle ? noteTitle : '');
-                $('#noteModel-description').val(noteDescription ? noteDescription : '');
+                $('#noteModel-title').val(noteId ? $('#noteTitle'+noteId).text() : '');
+                $('#noteModel-description').val(noteId ? $('#noteDescription'+noteId).text() : '');
                 $('#noteModal').modal('show');
             }
 
