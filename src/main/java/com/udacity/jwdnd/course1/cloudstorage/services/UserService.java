@@ -11,11 +11,11 @@ import java.util.Base64;
 public class UserService {
 
     private final UserMapper userMapper;
-    private final EncryptionService encryptionService;
+    private final HashService hashService;
 
-    public UserService(UserMapper userMapper, EncryptionService encryptionService) {
+    public UserService(UserMapper userMapper, HashService hashService) {
         this.userMapper = userMapper;
-        this.encryptionService = encryptionService;
+        this.hashService = hashService;
     }
 
     public boolean isUsernameAvailable(String username) {
@@ -27,8 +27,8 @@ public class UserService {
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
-        String encryptValue = encryptionService.encryptValue(userModel.getPassword(), encodedSalt);
-        return userMapper.insert(new UserModel(null, userModel.getUsername(), encodedSalt, encryptValue, userModel.getFirstName(), userModel.getLastName()));
+        String hashedPassword  = hashService.getHashedValue(userModel.getPassword(), encodedSalt);
+        return userMapper.insert(new UserModel(null, userModel.getUsername(), encodedSalt, hashedPassword , userModel.getFirstName(), userModel.getLastName()));
     }
 
     public Integer getUserId(String username) {

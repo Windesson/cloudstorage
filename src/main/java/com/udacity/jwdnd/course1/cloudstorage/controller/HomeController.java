@@ -36,8 +36,7 @@ public class HomeController {
             model.addAttribute("notes", this.noteService.getNotes(userId));
             model.addAttribute("credentialDTOs", this.credentialService.getCredentials(userId));
         } catch (Exception e){
-            model.addAttribute("loginError", "an error occurred please try again later");
-            return "login";
+            model.addAttribute("error", "An error occurred please try again later.");
         }
 
         return "home";

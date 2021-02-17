@@ -29,4 +29,7 @@ public class NoteService {
         return noteMapper.updateNote(noteModel);
     }
 
+    public boolean noteExists(String noteTitle, Integer userId) {
+        return noteMapper.getNoteByTitle(noteTitle,userId) != null;
+    }
 }

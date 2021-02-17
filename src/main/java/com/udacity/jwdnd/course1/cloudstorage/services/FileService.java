@@ -29,8 +29,12 @@ public class FileService {
         return fileMapper.delete(fileId,userId);
     }
 
-    public FileModel get(Integer fileId, Integer userId) {
+    public FileModel getFileById(Integer fileId, Integer userId) {
         return fileMapper.getFile(fileId, userId);
+    }
+
+    public boolean fileExists(String originalFilename, Integer userId) {
+        return fileMapper.getFileByName(originalFilename, userId) != null;
     }
 }
 

@@ -6,10 +6,13 @@ import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class CredentialController {
@@ -23,29 +26,32 @@ public class CredentialController {
     }
 
     @PostMapping(value = "/credential")
-    public String newCredential(Authentication authentication, CredentialDto CredentialDto){
+    public RedirectView newCredential(Authentication authentication, CredentialDto CredentialDto, RedirectAttributes model){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
             if(CredentialDto.getCredentialId() == null) credentialService.addCredential(CredentialDto,userId);
             else credentialService.updateCredential(CredentialDto,userId);
         } catch (Exception e) {
-            e.printStackTrace();
+            model.addFlashAttribute("error", "an error occurred please try again later");
         }
 
-        return "redirect:/home";
+        RedirectView redirectView= new RedirectView("/home",true);
+        return redirectView;
     }
 
     @PostMapping(value = "/credential/delete/{id}")
-    public String deleteNote(Authentication authentication, @PathVariable(value = "id") Integer credentialId){
+    public RedirectView deleteNote(Authentication authentication, @PathVariable(value = "id") Integer credentialId,
+                             RedirectAttributes model){
         Integer userId = userService.getUserId(authentication.getName());
 
         try {
             credentialService.deleteCredential(credentialId, userId);
         } catch (Exception e) {
-            e.printStackTrace();
+            model.addFlashAttribute("error", "an error occurred please try again later");
         }
 
-        return "redirect:/home";
+        RedirectView redirectView= new RedirectView("/home",true);
+        return redirectView;
     }
 }

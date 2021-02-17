@@ -19,4 +19,7 @@ public interface NoteMapper {
 
     @Update("UPDATE NOTES SET notetitle = #{noteTitle}, notedescription = #{noteDescription} WHERE noteid = #{noteId} AND userid = #{userId}")
     Integer updateNote(NoteModel noteModel);
+
+    @Select("SELECT * FROM NOTES WHERE notetitle = #{noteTitle} AND userid = #{userId} LIMIT 1")
+    NoteModel getNoteByTitle(String noteTitle, Integer userId);
 }
