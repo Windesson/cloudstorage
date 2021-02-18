@@ -95,21 +95,47 @@ class CloudStorageApplicationTests {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.login(username, password);
 
-		String originalNoteTitle = "title-test";
-		String originalNoteDescription = "-test1";
+		String originalNoteTitle = "title";
+		String originalNoteDescription = "description";
 		NotePage notePage = new NotePage(driver);
 
-		//creates a note,
+		//creates a note, and verifies it is displayed.
 		notePage.createNote(originalNoteTitle, originalNoteDescription);
 
 		WebElement baseTable = driver.findElement(By.cssSelector("#userTable"));
-		WebElement tableRowOne  = baseTable.findElements(By.tagName("tr")).get(1);
-		String actualNoteTitle = tableRowOne.findElement(By.tagName("th")).getText();
-		String actualNoteDescription = tableRowOne.findElements(By.tagName("td")).get(1).getText();
+		WebElement noteOneRow  = baseTable.findElements(By.tagName("tr")).get(1);
+		String actualNoteTitle = noteOneRow.findElement(By.tagName("th")).getText();
+		String actualNoteDescription = noteOneRow.findElements(By.tagName("td")).get(1).getText();
 
-		//verifies it is displayed.
 		Assertions.assertEquals(originalNoteTitle, actualNoteTitle);
 		Assertions.assertEquals(originalNoteDescription, actualNoteDescription);
+
+		WebElement editButton = noteOneRow.findElement(By.cssSelector(".btn-success"));
+		editButton.click();
+		Thread.sleep(2000);
+
+		//edits an existing note and verifies that the changes are displayed
+		String updateNoteTitle = originalNoteTitle + "-updated";
+		String updateNoteDescription = originalNoteDescription + "-updated";
+		notePage.updateFirstNote(updateNoteTitle,updateNoteDescription);
+
+		baseTable = driver.findElement(By.cssSelector("#userTable"));
+		noteOneRow  = baseTable.findElements(By.cssSelector("tr")).get(1);
+
+		actualNoteTitle = noteOneRow.findElement(By.tagName("th")).getText();
+		actualNoteDescription = noteOneRow.findElements(By.tagName("td")).get(1).getText();
+
+		Assertions.assertEquals(updateNoteTitle, actualNoteTitle);
+		Assertions.assertEquals(updateNoteDescription, actualNoteDescription);
+
+		//deletes a note and verifies that the note is no longer displayed.
+		WebElement deleteButton = noteOneRow.findElement(By.cssSelector(".btn-danger"));
+		deleteButton.click();
+
+		baseTable = driver.findElement(By.cssSelector("#userTable"));
+		Integer tableRows  = baseTable.findElements(By.tagName("tr")).size();
+
+		Assertions.assertEquals(1,tableRows); // row 1 is the header
 	}
 
 }

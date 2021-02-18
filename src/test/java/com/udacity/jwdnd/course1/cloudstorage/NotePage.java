@@ -38,12 +38,16 @@ public class NotePage {
         noteModelTitle.sendKeys(title);
         noteModelDescription.sendKeys(description);
         noteSaveChanges.click();
+        Thread.sleep(2000);
     }
 
-    public void updateOpenedNote(String title, String description) {
+    public void updateFirstNote(String title, String description) throws InterruptedException {
+        noteModelTitle.clear();
         noteModelTitle.sendKeys(title);
+        noteModelDescription.clear();
         noteModelDescription.sendKeys(description);
         noteSaveChanges.click();
+        Thread.sleep(2000);
     }
 
 }
