@@ -55,18 +55,12 @@ class CloudStorageApplicationTests {
 		String username = "admin1";
 		String password = "whatabadpassword";
 
-		driver.get(baseURL + "/signup");
-
-		SignupPage signupPage = new SignupPage(driver);
-		signupPage.signup("Peter", "Zastoupil", username, password);
-
-		driver.get(baseURL + "/login");
-		LoginPage loginPage = new LoginPage(driver);
-		loginPage.login(username, password);
+		//signup
+		getHomePage(username, password);
 
 		Assertions.assertEquals("Home", driver.getTitle());
 
-		// logout
+		//logout
 		WebElement inputField = driver.findElement(By.id("logoutButton"));
 		inputField.click();
 		Thread.sleep(2000);
@@ -84,16 +78,7 @@ class CloudStorageApplicationTests {
 	public void noteTest() throws InterruptedException {
 		String username = "admin2";
 		String password = "whatabadpassword";
-
-		//signup
-		driver.get(baseURL + "/signup");
-		SignupPage signupPage = new SignupPage(driver);
-		signupPage.signup("Peter", "Zastoupil", username, password);
-		driver.get(baseURL + "/login");
-
-		//login
-		LoginPage loginPage = new LoginPage(driver);
-		loginPage.login(username, password);
+		getHomePage(username, password);
 
 		String originalNoteTitle = "title";
 		String originalNoteDescription = "description";
@@ -136,6 +121,37 @@ class CloudStorageApplicationTests {
 		Integer tableRows  = baseTable.findElements(By.tagName("tr")).size();
 
 		Assertions.assertEquals(1,tableRows); // row 1 is the header
+	}
+
+	@Test
+	public void credentialsTest() throws InterruptedException {
+		String username = "admin3";
+		String password = "whatabadpassword";
+		getHomePage(username, password);
+
+		String credUrl = "https://github.com/Windesson/cloudstorage.git";
+		String credUsername = "admin";
+		String credPassword = "systems";
+
+		//test that creates a set of credentials
+		CredentialPage credentialPage = new CredentialPage(driver);
+		credentialPage.addCredential(credUrl, credUsername, credPassword);
+
+		// verifies that they are displayed
+
+		// verifies that the displayed password is encrypted
+	}
+
+	private void getHomePage(String username, String password) throws InterruptedException {
+		//signup
+		driver.get(baseURL + "/signup");
+		SignupPage signupPage = new SignupPage(driver);
+		signupPage.signup("Peter", "Zastoupil", username, password);
+		driver.get(baseURL + "/login");
+
+		//login
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
 	}
 
 }
