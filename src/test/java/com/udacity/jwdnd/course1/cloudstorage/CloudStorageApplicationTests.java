@@ -85,13 +85,13 @@ class CloudStorageApplicationTests {
 		String username = "admin2";
 		String password = "whatabadpassword";
 
+		//signup
 		driver.get(baseURL + "/signup");
-
 		SignupPage signupPage = new SignupPage(driver);
 		signupPage.signup("Peter", "Zastoupil", username, password);
-
 		driver.get(baseURL + "/login");
 
+		//login
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.login(username, password);
 
