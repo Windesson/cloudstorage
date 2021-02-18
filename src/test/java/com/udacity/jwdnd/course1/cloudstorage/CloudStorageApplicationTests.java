@@ -87,15 +87,15 @@ class CloudStorageApplicationTests {
 		//creates a note, and verifies it is displayed.
 		notePage.createNote(originalNoteTitle, originalNoteDescription);
 
-		WebElement baseTable = driver.findElement(By.cssSelector("#userTable"));
-		WebElement noteOneRow  = baseTable.findElements(By.tagName("tr")).get(1);
-		String actualNoteTitle = noteOneRow.findElement(By.tagName("th")).getText();
-		String actualNoteDescription = noteOneRow.findElements(By.tagName("td")).get(1).getText();
+		String actualNoteTitle = driver.findElement(By.cssSelector("#noteTitleTh1")).getText();
+		String actualNoteDescription = driver.findElement(By.cssSelector("#noteDescriptionTd1")).getText();
+		Integer noteRowCount  = driver.findElements(By.cssSelector("#noteTable > tbody > tr")).size();
 
 		Assertions.assertEquals(originalNoteTitle, actualNoteTitle);
 		Assertions.assertEquals(originalNoteDescription, actualNoteDescription);
+		Assertions.assertEquals(1, noteRowCount);
 
-		WebElement editButton = noteOneRow.findElement(By.cssSelector(".btn-success"));
+		WebElement editButton = driver.findElement(By.cssSelector("#noteEditButton1"));
 		editButton.click();
 		Thread.sleep(2000);
 
@@ -104,23 +104,20 @@ class CloudStorageApplicationTests {
 		String updateNoteDescription = originalNoteDescription + "-updated";
 		notePage.updateFirstNote(updateNoteTitle,updateNoteDescription);
 
-		baseTable = driver.findElement(By.cssSelector("#userTable"));
-		noteOneRow  = baseTable.findElements(By.cssSelector("tr")).get(1);
 
-		actualNoteTitle = noteOneRow.findElement(By.tagName("th")).getText();
-		actualNoteDescription = noteOneRow.findElements(By.tagName("td")).get(1).getText();
+		actualNoteTitle = driver.findElement(By.cssSelector("#noteTitleTh1")).getText();
+		actualNoteDescription = driver.findElement(By.cssSelector("#noteDescriptionTd1")).getText();
 
 		Assertions.assertEquals(updateNoteTitle, actualNoteTitle);
 		Assertions.assertEquals(updateNoteDescription, actualNoteDescription);
 
 		//deletes a note and verifies that the note is no longer displayed.
-		WebElement deleteButton = noteOneRow.findElement(By.cssSelector(".btn-danger"));
+		WebElement deleteButton = driver.findElement(By.cssSelector("#noteDeleteButton1"));
 		deleteButton.click();
 
-		baseTable = driver.findElement(By.cssSelector("#userTable"));
-		Integer tableRows  = baseTable.findElements(By.tagName("tr")).size();
+		noteRowCount  = driver.findElements(By.cssSelector("#userTable > tbody > tr")).size();
 
-		Assertions.assertEquals(1,tableRows); // row 1 is the header
+		Assertions.assertEquals(0, noteRowCount);
 	}
 
 	@Test

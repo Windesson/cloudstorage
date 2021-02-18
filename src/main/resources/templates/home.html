@@ -81,7 +81,7 @@
                         </button>
 
                         <div class="table-responsive">
-                            <table class="table table-striped" id="userTable">
+                            <table class="table table-striped" id="noteTable">
                                 <thead>
                                     <tr>
                                         <th style="width: 20%" scope="col"></th>
@@ -97,17 +97,17 @@
                                                     <span th:attr="id=|noteId${note.getNoteId()}|" style="display:none" th:text="${note.getNoteId()}"></span>
                                                     <span th:attr="id=|noteTitle${note.getNoteId()}|" style="display:none" th:text="${note.getNoteTitle()}"></span>
                                                     <span th:attr="id=|noteDescription${note.getNoteId()}|" style="display:none" th:text="${note.getNoteDescription()}"></span>
-                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}')|">Edit</button>
+                                                    <button type="button" class="btn btn-success" th:attr="onclick=|showNoteModal('${note.getNoteId()}')|,id=|noteEditButton${note.getNoteId()}|">Edit</button>
                                                 </div>
                                                 <div class="btn-group mr-2" role="group" aria-label="Second group">
                                                     <form action="#" th:action="@{/note/delete/{id}(id=${note.getNoteId()})}" method="POST">
-                                                        <button class="btn btn-danger">Delete</button>
+                                                        <button th:attr="id=|noteDeleteButton${note.getNoteId()}|" class="btn btn-danger">Delete</button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </td>
-                                        <th  th:text="${note.getNoteTitle()}"  scope="row">Example Note Title</th>
-                                        <td th:text="${note.getNoteDescription()}"> Example Note Description </td>
+                                        <th th:attr="id=|noteTitleTh${note.getNoteId()}|" th:text="${note.getNoteTitle()}"  scope="row">Example Note Title</th>
+                                        <td th:attr="id=|noteDescriptionTd${note.getNoteId()}|" th:text="${note.getNoteDescription()}"> Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>

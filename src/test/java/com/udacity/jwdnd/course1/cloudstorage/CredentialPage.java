@@ -27,12 +27,10 @@ public class CredentialPage {
     @FindBy(css="#credentialSaveChanges")
     private WebElement saveCredentials;
 
-    private WebDriver driver;
-    private WebDriverWait driverWait;
+    private final WebDriverWait driverWait;
 
     public CredentialPage(WebDriver webDriver) {
-        this.driver = webDriver;
-        this.driverWait = new WebDriverWait(driver, 10);
+        this.driverWait = new WebDriverWait(webDriver, 10);
         PageFactory.initElements(webDriver, this);
     }
 
