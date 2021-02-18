@@ -176,9 +176,9 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <th class="" th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
-                                    <td th:text="${credential.getUsername()}" >Example Credential Username</td>
-                                    <td th:text="${credential.getEncryptedPassword()}" >Example Credential Password</td>
+                                    <th th:attr="id=|credentialUrlRow${credential.getCredentialId()}|" th:text="${credential.getUrl()}" scope="row">Example Credential URL</th>
+                                    <td th:attr="id=|credentialUsernameRow${credential.getCredentialId()}|" th:text="${credential.getUsername()}" >Example Credential Username</td>
+                                    <td th:attr="id=|credentialPasswordRow${credential.getCredentialId()}|" th:text="${credential.getEncryptedPassword()}" >Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -213,7 +213,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button id="credentialSaveChanges" type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                        <button id="credentialSaveChangesButton" type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>

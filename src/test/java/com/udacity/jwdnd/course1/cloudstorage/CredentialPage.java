@@ -5,15 +5,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class CredentialPage {
 
     @FindBy(css="#nav-credentials-tab")
     private WebElement navNotesTab;
-
-    @FindBy(css="#add-credential-button")
-    private WebElement addCredentialButton;
 
     @FindBy(css="#credentialModel-url")
     private WebElement url;
@@ -24,32 +24,31 @@ public class CredentialPage {
     @FindBy(css="#credentialModel-password")
     private WebElement password;
 
-    @FindBy(css="#credentialSaveChanges")
+    @FindBy(css="#credentialSaveChangesButton")
     private WebElement saveCredentials;
 
-    private final WebDriverWait driverWait;
+    private final WebDriver driver;
 
     public CredentialPage(WebDriver webDriver) {
-        this.driverWait = new WebDriverWait(webDriver, 10);
+        this.driver = webDriver;
         PageFactory.initElements(webDriver, this);
     }
 
     public void addCredential(String url, String username, String password){
-        viewCredentialTable();
-        this.addCredentialButton.click();
-        this.driverWait.until(webDriver -> webDriver.findElement(By.id("credentialModal")));
+        this.navNotesTab.click();
+
+        WebElement addNewCredentialButton = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.elementToBeClickable(By.id("add-credential-button")));
+        addNewCredentialButton.click();
+
+        WebElement credentialSaveChangesButton = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.elementToBeClickable(By.id("credentialSaveChangesButton")));
 
         this.url.sendKeys(url);
         this.username.sendKeys(username);
         this.password.sendKeys(password);
 
-        saveCredentials.sendKeys();
+        credentialSaveChangesButton.click();
     }
 
-    public WebElement viewCredentialTable(){
-        this.navNotesTab.click();
-        WebElement marker = driverWait.until(webDriver -> webDriver.findElement(By.id("credentialTable")));
-
-        return marker;
-    }
 }

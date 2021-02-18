@@ -9,6 +9,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.util.List;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
@@ -126,17 +128,25 @@ class CloudStorageApplicationTests {
 		String password = "whatabadpassword";
 		getHomePage(username, password);
 
-		String credUrl = "https://github.com/Windesson/cloudstorage.git";
-		String credUsername = "admin";
-		String credPassword = "systems";
+		String originalCredUrl = "https://github.com/Windesson/cloudstorage.git";
+		String originalCredUsername = "admin";
+		String originalCredPassword = "systems";
 
 		//test that creates a set of credentials
 		CredentialPage credentialPage = new CredentialPage(driver);
-		credentialPage.addCredential(credUrl, credUsername, credPassword);
+		credentialPage.addCredential(originalCredUrl, originalCredUsername, originalCredPassword);
 
 		// verifies that they are displayed
+		List<WebElement> credentialRows  = driver.findElements(By.cssSelector("#credentialTable > tbody > tr"));
+		Assertions.assertEquals(1, credentialRows.size());
 
 		// verifies that the displayed password is encrypted
+		String actualUrl = driver.findElement(By.cssSelector("#credentialUrlRow1")).getText();
+		String actualUsername = driver.findElement(By.cssSelector("#credentialUsernameRow1")).getText();
+		String actualPasswordEncrypted = driver.findElement(By.cssSelector("#credentialPasswordRow1")).getText();
+
+		Assertions.assertEquals(originalCredUrl, actualUrl);
+		Assertions.assertEquals(originalCredUsername, actualUsername);
 	}
 
 	private void getHomePage(String username, String password) throws InterruptedException {
