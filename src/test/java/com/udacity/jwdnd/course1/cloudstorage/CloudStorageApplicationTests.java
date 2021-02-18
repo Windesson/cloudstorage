@@ -6,8 +6,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -147,6 +150,28 @@ class CloudStorageApplicationTests {
 
 		Assertions.assertEquals(originalCredUrl, actualUrl);
 		Assertions.assertEquals(originalCredUsername, actualUsername);
+		Assertions.assertNotEquals(originalCredPassword, actualPasswordEncrypted);
+
+		//views an existing set of credentials
+		//verifies that the viewable password is unencrypted
+		Boolean isVerified = credentialPage.verifyCredential(originalCredUrl, originalCredUsername, originalCredPassword);
+		Assertions.assertTrue(isVerified);
+
+		//edits the credentials, and verifies that the changes are displayed.
+		String updatedCredUrl = "https://github.com/admin/cloudstorage.git";
+		String updatedCredUsername = "admin-updated";
+		String updatedCredPassword = "systems-updated";
+
+		credentialPage.updateCredential(updatedCredUrl, updatedCredUsername, updatedCredPassword);
+		isVerified = credentialPage.verifyCredential(updatedCredUrl, updatedCredUsername, updatedCredPassword);
+		Assertions.assertTrue(isVerified);
+
+		//deletes an existing set of credentials and verifies that the credentials are no longer displayed
+		credentialPage.deleteCredentials();
+
+		credentialRows  = driver.findElements(By.cssSelector("#credentialTable > tbody > tr"));
+		Assertions.assertEquals(0, credentialRows.size());
+
 	}
 
 	private void getHomePage(String username, String password) throws InterruptedException {

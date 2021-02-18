@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 public class CredentialPage {
 
@@ -24,9 +25,6 @@ public class CredentialPage {
     @FindBy(css="#credentialModel-password")
     private WebElement password;
 
-    @FindBy(css="#credentialSaveChangesButton")
-    private WebElement saveCredentials;
-
     private final WebDriver driver;
 
     public CredentialPage(WebDriver webDriver) {
@@ -41,14 +39,63 @@ public class CredentialPage {
                 .until(ExpectedConditions.elementToBeClickable(By.id("add-credential-button")));
         addNewCredentialButton.click();
 
-        WebElement credentialSaveChangesButton = new WebDriverWait(driver, 10)
-                .until(ExpectedConditions.elementToBeClickable(By.id("credentialSaveChangesButton")));
+        WebElement credentialModelSaveChangesButton = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.elementToBeClickable(By.id("credentialModelSaveChangesButton")));
 
         this.url.sendKeys(url);
         this.username.sendKeys(username);
         this.password.sendKeys(password);
 
-        credentialSaveChangesButton.click();
+        credentialModelSaveChangesButton.click();
     }
 
+    public boolean verifyCredential(String originalCredUrl, String originalCredUsername, String originalCredPassword) throws InterruptedException {
+        editableMode();
+
+        WebElement credentialModelCloseButton = new WebDriverWait(driver, 10)
+               .until(ExpectedConditions.elementToBeClickable(By.id("credentialModelCloseButton")));
+
+       String actualUrl = this.url.getAttribute("value");
+       String actualUserName = this.username.getAttribute("value");
+       String actualPassword = this.password.getAttribute("value");
+
+       credentialModelCloseButton.click();
+
+        return actualUrl.equals(originalCredUrl) &&
+                actualUserName.equals(originalCredUsername) &&
+                actualPassword.equals(originalCredPassword);
+
+    }
+
+    public void updateCredential(String url, String username, String password) throws InterruptedException {
+        editableMode();
+
+        WebElement credentialModelSaveChangesButton = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.elementToBeClickable(By.id("credentialModelSaveChangesButton")));
+
+        this.url.clear();
+        this.url.sendKeys(url);
+        this.username.clear();
+        this.username.sendKeys(username);
+        this.password.clear();
+        this.password.sendKeys(password);
+
+        credentialModelSaveChangesButton.click();
+    }
+
+    public void deleteCredentials(){
+        List<WebElement> deleteButtons = new WebDriverWait(driver, 10)
+                .until(webdriver -> webdriver.findElements(By.cssSelector("#credentialTable .btn-danger ")));
+
+        deleteButtons.forEach( btn -> btn.click());
+    }
+
+    private void editableMode() throws InterruptedException {
+        List<WebElement> buttons = new WebDriverWait(driver, 10)
+                .until(webdriver -> webdriver.findElements(By.cssSelector("#credentialTable .btn-success ")));
+
+        Thread.sleep(1000);
+        buttons.get(0).click();
+        Thread.sleep(1000);
+    }
 }
