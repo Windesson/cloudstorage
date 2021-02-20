@@ -15,64 +15,90 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
 	private int port;
 
-	private WebDriver driver;
+	private static WebDriver driver;
+	static public String baseURL;
+	static final String username = "admin";
+	static final String password = "whatabadpassword";
 
-	public String baseURL;
+	private static CredentialPage credentialPage;
+	private static NotePage notePage;
 
 	@BeforeAll
-	static void beforeAll() {
+	public static void beforeAll() {
 		WebDriverManager.chromedriver().setup();
+		driver = new ChromeDriver();
+		credentialPage = new CredentialPage(driver);
+		notePage = new NotePage(driver);
 	}
 
 	@BeforeEach
-	public void beforeEach() {
-
-		this.driver = new ChromeDriver();
+	public void beforeEach(){
 		baseURL = "http://localhost:" + port;
 	}
 
-	@AfterEach
-	public void afterEach() {
-		if (this.driver != null) {
-			driver.quit();
-		}
+	@AfterAll
+	public static void afterAll() {
+		if(driver != null) driver.quit();
 	}
 
 	@Test
-	public void getLoginPage() {
+	@Order(1)
+	public void getLoginPage_WhenUnauthorizedUser_Allow(){
 		driver.get(baseURL+"/login");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
-
 	@Test
-	public void getSignupPage() {
+	@Order(2)
+	public void getSignupPage_WhenUnauthorizedUser_Allow() {
 		driver.get(baseURL+"/signup");
 		Assertions.assertEquals("Sign Up", driver.getTitle());
 	}
 
 	@Test
-	public void getHomePage() throws InterruptedException {
-		String username = "admin1";
-		String password = "whatabadpassword";
+	@Order(3)
+	public void getHomePage_WhenUnauthorizedUser_Deny() {
+		driver.get(baseURL+"/home");
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	@Order(4)
+	public void getHomePage_WhenUserHasSignup_Allow() throws InterruptedException {
 
 		//signup
-		getHomePage(username, password);
+		driver.get(baseURL + "/signup");
+		SignupPage signupPage = new SignupPage(driver);
+		signupPage.signup("Peter", "Zastoupil", username, password);
+		driver.get(baseURL + "/login");
+
+		//login
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
 
 		Assertions.assertEquals("Home", driver.getTitle());
+	}
 
+	@Test
+	@Order(5)
+	public void getLogout_FromHomePage_RedirectToLogin() throws InterruptedException {
 		//logout
 		WebElement inputField = driver.findElement(By.id("logoutButton"));
 		inputField.click();
 		Thread.sleep(2000);
 
 		Assertions.assertEquals("Login", driver.getTitle());
+	}
 
-		//verifies that the home page is no longer accessible
+	@Test
+	@Order(6)
+	public void user_WhenLogout_CannotAccessHome() throws InterruptedException {
+
 		driver.get(baseURL + "/home");
 		Thread.sleep(2000);
 
@@ -80,25 +106,35 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void noteTest() throws InterruptedException {
-		String username = "admin2";
-		String password = "whatabadpassword";
-		getHomePage(username, password);
+	@Order(7)
+	public void note_WhenCreated_IsDisplayed() throws InterruptedException {
+
+		//login
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
 
 		String originalNoteTitle = "title";
 		String originalNoteDescription = "description";
-		NotePage notePage = new NotePage(driver);
 
 		//creates a note, and verifies it is displayed.
 		notePage.createNote(originalNoteTitle, originalNoteDescription);
 
 		String actualNoteTitle = driver.findElement(By.cssSelector("#noteTitleTh1")).getText();
 		String actualNoteDescription = driver.findElement(By.cssSelector("#noteDescriptionTd1")).getText();
-		Integer noteRowCount  = driver.findElements(By.cssSelector("#noteTable > tbody > tr")).size();
+		Integer noteRowCount = driver.findElements(By.cssSelector("#noteTable > tbody > tr")).size();
 
 		Assertions.assertEquals(originalNoteTitle, actualNoteTitle);
 		Assertions.assertEquals(originalNoteDescription, actualNoteDescription);
 		Assertions.assertEquals(1, noteRowCount);
+
+	}
+
+	@Test
+	@Order(8)
+	public void note_WhenEdited_DisplayChanges() throws InterruptedException {
+
+		String originalNoteTitle = "title";
+		String originalNoteDescription = "description";
 
 		WebElement editButton = driver.findElement(By.cssSelector("#noteEditButton1"));
 		editButton.click();
@@ -107,43 +143,47 @@ class CloudStorageApplicationTests {
 		//edits an existing note and verifies that the changes are displayed
 		String updateNoteTitle = originalNoteTitle + "-updated";
 		String updateNoteDescription = originalNoteDescription + "-updated";
-		notePage.updateFirstNote(updateNoteTitle,updateNoteDescription);
 
+		notePage.updateFirstNote(updateNoteTitle, updateNoteDescription);
 
-		actualNoteTitle = driver.findElement(By.cssSelector("#noteTitleTh1")).getText();
-		actualNoteDescription = driver.findElement(By.cssSelector("#noteDescriptionTd1")).getText();
+		String actualNoteTitle = driver.findElement(By.cssSelector("#noteTitleTh1")).getText();
+		String actualNoteDescription = driver.findElement(By.cssSelector("#noteDescriptionTd1")).getText();
 
 		Assertions.assertEquals(updateNoteTitle, actualNoteTitle);
 		Assertions.assertEquals(updateNoteDescription, actualNoteDescription);
+	}
 
+	@Test
+	@Order(9)
+	public void note_WhenDelete_updateTable() throws InterruptedException {
 		//deletes a note and verifies that the note is no longer displayed.
 		WebElement deleteButton = driver.findElement(By.cssSelector("#noteDeleteButton1"));
 		deleteButton.click();
 
-		noteRowCount  = driver.findElements(By.cssSelector("#userTable > tbody > tr")).size();
-
+		Integer noteRowCount  = driver.findElements(By.cssSelector("#userTable > tbody > tr")).size();
 		Assertions.assertEquals(0, noteRowCount);
 	}
 
 	@Test
-	public void credentialsTest() throws InterruptedException {
-		String username = "admin3";
-		String password = "whatabadpassword";
-		getHomePage(username, password);
+	@Order(10)
+	public void credentials_WhenCreate_UpdateCredentialTable() throws InterruptedException {
 
 		String originalCredUrl = "https://github.com/Windesson/cloudstorage.git";
 		String originalCredUsername = "admin";
 		String originalCredPassword = "systems";
 
+
+		driver.get(baseURL + "/home");
+		Thread.sleep(2000);
+
 		//test that creates a set of credentials
-		CredentialPage credentialPage = new CredentialPage(driver);
 		credentialPage.addCredential(originalCredUrl, originalCredUsername, originalCredPassword);
 
-		// verifies that they are displayed
-		List<WebElement> credentialRows  = driver.findElements(By.cssSelector("#credentialTable > tbody > tr"));
+		//verifies that they are displayed
+		List<WebElement> credentialRows = driver.findElements(By.cssSelector("#credentialTable > tbody > tr"));
 		Assertions.assertEquals(1, credentialRows.size());
 
-		// verifies that the displayed password is encrypted
+		//verifies that the displayed password is encrypted
 		String actualUrl = driver.findElement(By.cssSelector("#credentialUrlRow1")).getText();
 		String actualUsername = driver.findElement(By.cssSelector("#credentialUsernameRow1")).getText();
 		String actualPasswordEncrypted = driver.findElement(By.cssSelector("#credentialPasswordRow1")).getText();
@@ -157,33 +197,30 @@ class CloudStorageApplicationTests {
 		Boolean isVerified = credentialPage.verifyCredential(originalCredUrl, originalCredUsername, originalCredPassword);
 		Assertions.assertTrue(isVerified);
 
+	}
+
+	@Test
+	@Order(11)
+	public void credentials_WhenEdit_UpdateCredentialTable() throws InterruptedException {
+
 		//edits the credentials, and verifies that the changes are displayed.
 		String updatedCredUrl = "https://github.com/admin/cloudstorage.git";
 		String updatedCredUsername = "admin-updated";
 		String updatedCredPassword = "systems-updated";
 
 		credentialPage.updateCredential(updatedCredUrl, updatedCredUsername, updatedCredPassword);
-		isVerified = credentialPage.verifyCredential(updatedCredUrl, updatedCredUsername, updatedCredPassword);
+		boolean isVerified = credentialPage.verifyCredential(updatedCredUrl, updatedCredUsername, updatedCredPassword);
 		Assertions.assertTrue(isVerified);
+	}
 
+	@Test
+	@Order(12)
+	public void credentials_WhenDelete_UpdateCredentialTable() throws InterruptedException {
 		//deletes an existing set of credentials and verifies that the credentials are no longer displayed
 		credentialPage.deleteCredentials();
 
-		credentialRows  = driver.findElements(By.cssSelector("#credentialTable > tbody > tr"));
+		List<WebElement> credentialRows  = driver.findElements(By.cssSelector("#credentialTable > tbody > tr"));
 		Assertions.assertEquals(0, credentialRows.size());
-
-	}
-
-	private void getHomePage(String username, String password) throws InterruptedException {
-		//signup
-		driver.get(baseURL + "/signup");
-		SignupPage signupPage = new SignupPage(driver);
-		signupPage.signup("Peter", "Zastoupil", username, password);
-		driver.get(baseURL + "/login");
-
-		//login
-		LoginPage loginPage = new LoginPage(driver);
-		loginPage.login(username, password);
 	}
 
 }
