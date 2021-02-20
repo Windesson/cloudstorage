@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Messenger;
 import com.udacity.jwdnd.course1.cloudstorage.model.UserModel;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.stereotype.Controller;
@@ -31,13 +32,13 @@ public class SignupController {
         String signupError = null;
 
         if (!userService.isUsernameAvailable(userModel.getUsername())) {
-            signupError = "The username already exists.";
+            signupError = Messenger.USER_EXISTS;
         }
 
         if (signupError == null) {
             int rowsAdded = userService.createUser(userModel);
             if (rowsAdded < 0) {
-                signupError = "There was an error signing you up. Please try again.";
+                signupError = Messenger.ERROR_DEFAULT;
             }
         }
 

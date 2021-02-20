@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Messenger;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
@@ -36,7 +37,7 @@ public class HomeController {
             model.addAttribute("notes", this.noteService.getNotes(userId));
             model.addAttribute("credentialDTOs", this.credentialService.getCredentials(userId));
         } catch (Exception e){
-            model.addAttribute("error", "An error occurred please try again later.");
+            model.addAttribute("error", Messenger.ERROR_DEFAULT);
         }
 
         return "home";

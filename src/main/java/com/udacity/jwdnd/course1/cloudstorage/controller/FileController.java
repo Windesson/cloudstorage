@@ -1,6 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.FileModel;
+import com.udacity.jwdnd.course1.cloudstorage.model.Messenger;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.http.MediaType;
@@ -9,11 +10,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Controller
 
@@ -32,16 +37,18 @@ public class FileController {
                              RedirectAttributes model){
         try {
             Integer userId = userService.getUserId(authentication.getName());
-            if(file.isEmpty() || file.getOriginalFilename().isEmpty()){
-                model.addFlashAttribute("error", "Uploads with empty file extensions are not allowed");
+
+            if(file.getOriginalFilename().isEmpty()){
+                model.addFlashAttribute("error", Messenger.FILE_NAME_EMPTY);
             }
             else if(fileService.fileExists(file.getOriginalFilename(), userId)){
-                model.addFlashAttribute("error", "A file with the name already exists.");
+                model.addFlashAttribute("error", Messenger.FILE_NAME_DUPLICATED);
             } else{
                 fileService.add(file, userId);
+                model.addFlashAttribute("success",true);
             }
-        } catch (IOException e) {
-            model.addFlashAttribute("error", "An error occurred please try again later.");
+        } catch (Exception e) {
+            model.addFlashAttribute("error", Messenger.ERROR_DEFAULT);
         }
 
         RedirectView redirectView= new RedirectView("/home",true);
@@ -54,8 +61,9 @@ public class FileController {
         try {
             Integer userId = userService.getUserId(authentication.getName());
             fileService.delete(fileId, userId);
+            model.addFlashAttribute("success",true);
         } catch (Exception e) {
-            model.addFlashAttribute("error", "An error occurred please try again later.");
+            model.addFlashAttribute("error", Messenger.ERROR_DEFAULT);
         }
 
         RedirectView redirectView= new RedirectView("/home",true);
@@ -74,10 +82,9 @@ public class FileController {
             String headerString = "attachment; filename=\"" + fileModel.getFilename() + "\"";
             response.setHeader("Content-Disposition", headerString);
         } catch (Exception e) {
-            model.addAttribute("error", "An error occurred please try again later.");
+            model.addAttribute("error", Messenger.ERROR_DEFAULT);
         }
 
         return data;
     }
-    
 }

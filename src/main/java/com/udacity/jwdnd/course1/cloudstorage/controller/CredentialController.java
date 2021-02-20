@@ -32,8 +32,9 @@ public class CredentialController {
         try {
             if(CredentialDto.getCredentialId() == null) credentialService.addCredential(CredentialDto,userId);
             else credentialService.updateCredential(CredentialDto,userId);
+            model.addFlashAttribute("success",true);
         } catch (Exception e) {
-            model.addFlashAttribute("error", "an error occurred please try again later");
+            model.addFlashAttribute("error", model.addFlashAttribute("success",true));
         }
 
         model.addFlashAttribute("navTab","credentials");
@@ -48,8 +49,9 @@ public class CredentialController {
 
         try {
             credentialService.deleteCredential(credentialId, userId);
+            model.addFlashAttribute("success",true);
         } catch (Exception e) {
-            model.addFlashAttribute("error", "an error occurred please try again later");
+            model.addFlashAttribute("error", model.addFlashAttribute("success",true));
         }
 
         model.addFlashAttribute("navTab","credentials");
